@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简便运算大冒险 🎮</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 30px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .game-header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .game-header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .game-screen {
+            display: none;
+        }
+
+        .game-screen.active {
+            display: block;
+        }
+
+        /* 开始界面 */
+        .start-screen {
+            text-align: center;
+        }
+
+        .start-screen .character {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .difficulty-selector {
+            margin: 30px 0;
+        }
+
+        .difficulty-selector h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .difficulty-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-easy {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-medium {
+            background: #FF9800;
+            color: white;
+        }
+
+        .btn-hard {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 1.3em;
+            padding: 15px 50px;
+            margin-top: 20px;
+        }
+
+        /* 游戏界面 */
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .stars-container {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .star {
+            font-size: 2em;
+            color: #ccc;
+            transition: all 0.3s ease;
+        }
+
+        .star.earned {
+            color: #FFD700;
+            animation: starPop 0.5s ease;
+        }
+
+        @keyframes starPop {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.3);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .question-area {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .question-text {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .question-hint {
+            color: #666;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        .answer-area {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .answer-input {
+            width: 100%;
+            max-width: 200px;
+            padding: 15px;
+            font-size: 1.5em;
+            text-align: center;
+            border: 3px solid #667eea;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #764ba2;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .feedback {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            animation: slideIn 0.3s ease;
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 结果界面 */
+        .result-screen {
+            text-align: center;
+        }
+
+        .result-icon {
+            font-size: 100px;
+            margin-bottom: 20px;
+        }
+
+        .result-title {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .result-score {
+            font-size: 3em;
+            font-weight: bold;
+            color: #FFD700;
+            margin: 20px 0;
+        }
+
+        .result-stars {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .result-stars .star {
+            font-size: 3em;
+        }
+
+        .result-message {
+            font-size: 1.2em;
+            color: #666;
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 600px) {
+            .game-container {
+                padding: 20px;
+            }
+
+            .game-header h1 {
+                font-size: 2em;
+            }
+
+            .question-text {
+                font-size: 2em;
+            }
+
+            .difficulty-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <h1>🎮 简便运算大冒险</h1>
+            <p>和妙妙老师一起玩转数学！</p>
+        </div>
+
+        <!-- 开始界面 -->
+        <div id="startScreen" class="game-screen active start-screen">
+            <div class="character">🧙‍♀️</div>
+            <h2>欢迎来到简便运算大冒险！</h2>
+            <p>选择难度开始挑战吧！</p>
+
+            <div class="difficulty-selector">
+                <h3>选择难度：</h3>
+                <div class="difficulty-buttons">
+                    <button class="btn btn-easy" onclick="selectDifficulty('easy')">
+                        🌟 简单
+                    </button>
+                    <button class="btn btn-medium" onclick="selectDifficulty('medium')">
+                        🌟🌟 中等
+                    </button>
+                    <button class="btn btn-hard" onclick="selectDifficulty('hard')">
+                        🌟🌟🌟 困难
+                    </button>
+                </div>
+            </div>
+
+            <button class="btn btn-start" onclick="startGame()">
+                🚀 开始游戏
+            </button>
+        </div>
+
+        <!-- 游戏界面 -->
+        <div id="gameScreen" class="game-screen">
+            <div class="game-stats">
+                <div class="stat">
+                    <div class="stat-value" id="currentLevel">1</div>
+                    <div class="stat-label">第几关</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="currentScore">0</div>
+                    <div class="stat-label">得分</div>
+                </div>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 33%"></div>
+            </div>
+
+            <div class="stars-container">
+                <span class="star" id="star1">⭐</span>
+                <span class="star" id="star2">⭐</span>
+                <span class="star" id="star3">⭐</span>
+            </div>
+
+            <div class="question-area">
+                <div class="question-text" id="questionText">加载中...</div>
+                <div class="question-hint" id="questionHint"></div>
+            </div>
+
+            <div class="answer-area">
+                <input type="number" class="answer-input" id="answerInput" placeholder="输入答案" onkeypress="handleKeyPress(event)">
+                <button class="btn btn-primary" onclick="submitAnswer()">
+                    提交答案
+                </button>
+            </div>
+
+            <div class="feedback" id="feedback" style="display: none;"></div>
+        </div>
+
+        <!-- 结果界面 -->
+        <div id="resultScreen" class="game-screen result-screen">
+            <div class="result-icon" id="resultIcon">🏆</div>
+            <h2 class="result-title" id="resultTitle">游戏结束！</h2>
+            <div class="result-score" id="finalScore">30分</div>
+            <div class="result-stars">
+                <span class="star earned" id="finalStar1">⭐</span>
+                <span class="star earned" id="finalStar2">⭐</span>
+                <span class="star earned" id="finalStar3">⭐</span>
+            </div>
+            <p class="result-message" id="resultMessage">太棒了！你完成了所有关卡！</p>
+            <button class="btn btn-primary" onclick="restartGame()">
+                🔄 再玩一次
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 游戏状态
+        let gameState = {
+            difficulty: 'easy',
+            currentLevel: 1,
+            totalLevels: 3,
+            score: 0,
+            stars: 0,
+            currentQuestion: null
+        };
+
+        // API 配置
+        const API_URL = 'http://localhost:8000/v1/chat/completions';
+        const SESSION_ID = 'game_session_' + Date.now();
+
+        // 选择难度
+        function selectDifficulty(difficulty) {
+            gameState.difficulty = difficulty;
+            // 更新按钮样式
+            document.querySelectorAll('.difficulty-buttons .btn').forEach(btn => {
+                btn.style.opacity = '0.5';
+            });
+            event.target.style.opacity = '1';
+        }
+
+        // 开始游戏
+        async function startGame() {
+            showScreen('gameScreen');
+            gameState.currentLevel = 1;
+            gameState.score = 0;
+            gameState.stars = 0;
+            updateStats();
+            await loadQuestion();
+        }
+
+        // 加载题目
+        async function loadQuestion() {
+            // 生成题目提示
+            const prompt = `生成一道${gameState.difficulty === 'easy' ? '简单' : gameState.difficulty === 'medium' ? '中等' : '困难'}难度的简便运算题，只返回题目和答案，格式：题目 = ? 答案：XX`;
+
+            try {
+                // 这里我们直接在本地生成题目，因为后端工具已经实现
+                const response = await generateLocalQuestion();
+                gameState.currentQuestion = response;
+
+                document.getElementById('questionText').textContent = response.problem;
+                document.getElementById('questionHint').textContent = response.hint;
+                document.getElementById('answerInput').value = '';
+                document.getElementById('answerInput').focus();
+            } catch (error) {
+                console.error('加载题目失败:', error);
+                document.getElementById('questionText').textContent = '题目加载失败，请重试';
+            }
+        }
+
+        // 本地生成题目（使用后端工具逻辑）
+        function generateLocalQuestion() {
+            const difficulty = gameState.difficulty;
+            let problem, answer;
+
+            if (difficulty === 'easy') {
+                const a = Math.floor(Math.random() * 9) + 1;
+                const b = Math.floor(Math.random() * 9) + 1;
+                const num1 = a * 10 + b;
+                const num2 = a * 10 + (10 - b);
+                problem = `${num1} + ${num2} = ?`;
+                answer = num1 + num2;
+            } else if (difficulty === 'medium') {
+                const bases = [10, 20, 30, 40, 50];
+                const base = bases[Math.floor(Math.random() * bases.length)];
+                const small = Math.floor(Math.random() * 9) + 1;
+
+                if (Math.random() > 0.5) {
+                    const num1 = base + small;
+                    const num2 = base - small;
+                    problem = `${num1} + ${num2} = ?`;
+                    answer = num1 + num2;
+                } else {
+                    const num1 = 100 - small;
+                    const num2 = small;
+                    problem = `${num1} - ${num2} = ?`;
+                    answer = num1 - num2;
+                }
+            } else {
+                if (Math.random() > 0.5) {
+                    const a = Math.floor(Math.random() * 9) + 1;
+                    const b = Math.floor(Math.random() * 9) + 1;
+                    const num1 = 100 - a;
+                    const num2 = 100 - b;
+                    problem = `${num1} + ${num2} = ?`;
+                    answer = num1 + num2;
+                } else {
+                    const num1 = Math.floor(Math.random() * 90) + 10;
+                    problem = `${num1} × 11 = ?`;
+                    answer = num1 * 11;
+                }
+            }
+
+            return {
+                problem: problem,
+                answer: answer,
+                difficulty: difficulty,
+                hint: '提示：试试用凑整法、拆分法或者观察数字规律哦！'
+            };
+        }
+
+        // 提交答案
+        function submitAnswer() {
+            const userAnswer = parseInt(document.getElementById('answerInput').value);
+            if (isNaN(userAnswer)) {
+                alert('请输入有效的数字答案！');
+                return;
+            }
+
+            const feedbackEl = document.getElementById('feedback');
+            feedbackEl.style.display = 'block';
+
+            if (userAnswer === gameState.currentQuestion.answer) {
+                // 答案正确
+                feedbackEl.className = 'feedback correct';
+                feedbackEl.textContent = '🎉 太棒了！答案正确！';
+                gameState.score += 10;
+                gameState.stars++;
+
+                // 显示星星
+                const starEl = document.getElementById(`star${gameState.currentLevel}`);
+                if (starEl) {
+                    starEl.classList.add('earned');
+                }
+
+                updateStats();
+
+                setTimeout(() => {
+                    if (gameState.currentLevel < gameState.totalLevels) {
+                        gameState.currentLevel++;
+                        updateStats();
+                        loadQuestion();
+                    } else {
+                        showResult();
+                    }
+                }, 1500);
+            } else {
+                // 答案错误
+                feedbackEl.className = 'feedback incorrect';
+                feedbackEl.textContent = `❌ 加油！正确答案是 ${gameState.currentQuestion.answer}，再试试看！`;
+            }
+        }
+
+        // 处理回车键
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                submitAnswer();
+            }
+        }
+
+        // 更新统计信息
+        function updateStats() {
+            document.getElementById('currentLevel').textContent = gameState.currentLevel;
+            document.getElementById('currentScore').textContent = gameState.score;
+
+            // 更新进度条
+            const progress = (gameState.currentLevel / gameState.totalLevels) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        // 显示结果
+        function showResult() {
+            showScreen('resultScreen');
+            document.getElementById('finalScore').textContent = gameState.score + '分';
+
+            // 根据得分显示不同的图标和消息
+            const resultIcon = document.getElementById('resultIcon');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultMessage = document.getElementById('resultMessage');
+
+            if (gameState.score === gameState.totalLevels * 10) {
+                resultIcon.textContent = '🏆';
+                resultTitle.textContent = '完美通关！';
+                resultMessage.textContent = '哇！你简直是简便运算小天才！三关全部满分通过！';
+            } else if (gameState.score >= gameState.totalLevels * 10 * 0.7) {
+                resultIcon.textContent = '🥇';
+                resultTitle.textContent = '太棒了！';
+                resultMessage.textContent = '你表现非常出色！继续加油！';
+            } else if (gameState.score >= gameState.totalLevels * 10 * 0.5) {
+                resultIcon.textContent = '🥈';
+                resultTitle.textContent = '做得不错！';
+                resultMessage.textContent = '还需要多多练习，你会越来越棒的！';
+            } else {
+                resultIcon.textContent = '💪';
+                resultTitle.textContent = '继续努力！';
+                resultMessage.textContent = '别灰心，多练习几次，你一定能掌握的！';
+            }
+
+            // 显示获得的星星
+            for (let i = 1; i <= 3; i++) {
+                const starEl = document.getElementById(`finalStar${i}`);
+                if (i <= gameState.stars) {
+                    starEl.classList.add('earned');
+                } else {
+                    starEl.classList.remove('earned');
+                }
+            }
+        }
+
+        // 重新开始游戏
+        function restartGame() {
+            // 重置星星显示
+            document.querySelectorAll('.star').forEach(star => {
+                star.classList.remove('earned');
+            });
+            document.getElementById('feedback').style.display = 'none';
+
+            showScreen('startScreen');
+        }
+
+        // 显示指定界面
+        function showScreen(screenId) {
+            document.querySelectorAll('.game-screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+    </script>
+</body>
+</html>
