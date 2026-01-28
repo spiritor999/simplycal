@@ -36,8 +36,15 @@ def start_game_session(difficulty: str = "easy") -> str:
     # 构建游戏链接（本地文件路径）
     game_link = f"file://{game_file}"
 
-    # 如果是通过HTTP服务器运行，可以提供HTTP链接
+    # HTTP链接（使用8080端口）
     http_link = "http://localhost:8080/assets/math_game.html"
+
+    # 添加服务器检查提示
+    server_info = """
+    💡 如果打不开链接，请先启动游戏服务器：
+       方法1: bash scripts/start_game_server.sh
+       方法2: python -m http.server 8080
+    """
 
     result = {
         "success": True,
@@ -45,6 +52,7 @@ def start_game_session(difficulty: str = "easy") -> str:
         "game_link": game_link,
         "http_link": http_link,
         "difficulty": difficulty,
+        "server_info": server_info,
         "message": "游戏已开始！请打开链接玩游戏，完成后告诉我你的得分！"
     }
 
