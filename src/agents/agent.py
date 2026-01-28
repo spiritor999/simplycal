@@ -16,6 +16,8 @@ from storage.memory.memory_saver import get_memory_saver
 
 # 导入数学工具
 from tools.math_problem_tool import generate_math_problem, verify_answer
+# 导入游戏交互工具
+from tools.game_interaction_tool import start_game_session, submit_game_result, get_game_tips
 
 LLM_CONFIG = "config/agent_llm_config.json"
 
@@ -63,7 +65,7 @@ def build_agent(ctx=None):
     )
     
     # 配置工具列表
-    tools = [generate_math_problem, verify_answer]
+    tools = [generate_math_problem, verify_answer, start_game_session, submit_game_result, get_game_tips]
     
     # 创建 Agent
     agent = create_agent(
