@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "name": "math-game",
+  "builds": [
+    {
+      "src": "assets/*.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/game.html",
+      "dest": "/assets/math_game.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/assets/$1"
+    }
+  ]
+}
