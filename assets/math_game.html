@@ -621,50 +621,8 @@
                         = <strong>${answer}</strong>`;
                 }
             }
-                        return `<h3>⚡ 闪电老师讲解：</h3>
-                        <strong>使用乘法分配律：</strong><br>
-                        ${num1} × ${num2}<br>
-                        = <strong>${answer}</strong>`;
-                    
-                    case '乘法结合律':
-                        return `<h3>⚡ 闪电老师讲解：</h3>
-                        <strong>使用乘法结合律：</strong><br>
-                        先计算容易的部分<br>
-                        ${num1} × ${num2}<br>
-                        = <strong>${answer}</strong>`;
-                    
-                    case '加法结合律':
-                        const compAdd = Math.ceil(num1 / 10) * 10 - num1;
-                        return `<h3>⚡ 闪电老师讲解：</h3>
-                        <strong>使用加法结合律：</strong><br>
-                        凑整十数更容易计算<br>
-                        ${num1} + ${num2}<br>
-                        = (${num1} + ${compAdd}) + (${num2} - ${compAdd})<br>
-                        = ${num1 + compAdd} + ${num2 - compAdd}<br>
-                        = <strong>${answer}</strong>`;
-                    
-                    case '除法分配律':
-                        return `<h3>⚡ 闪电老师讲解：</h3>
-                        <strong>使用除法分配律：</strong><br>
-                        ${num1} ÷ ${num2}<br>
-                        = <strong>${answer}</strong>`;
-                    
-                    case '乘法交换律':
-                        return `<h3>⚡ 闪电老师讲解：</h3>
-                        <strong>使用乘法交换律：</strong><br>
-                        交换因数的位置，积不变<br>
-                        ${num1} × ${num2} = ${num2} × ${num1}<br>
-                        = <strong>${answer}</strong>`;
-                    
-                    default:
-                        return `<h3>⚡ 闪电老师讲解：</h3>
-                        <strong>直接计算：</strong><br>
-                        ${question}<br>
-                        = <strong>${answer}</strong>`;
-                }
-            }
         };
-        
+
         // 开始游戏
         function startGame(difficulty) {
             gameState.difficulty = difficulty;
