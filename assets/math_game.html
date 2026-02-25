@@ -269,9 +269,9 @@
                 答对+10分，答错-5分
             </p>
             <div class="difficulty-btns">
-                <button class="btn btn-easy" onclick="startGame('easy')">简单 (10以内)</button>
-                <button class="btn btn-medium" onclick="startGame('medium')">中等 (100以内)</button>
-                <button class="btn btn-hard" onclick="startGame('hard')">困难 (1000以内)</button>
+                <button class="btn btn-easy" onclick="startGame('easy')">简单（两个数）</button>
+                <button class="btn btn-medium" onclick="startGame('medium')">中等（三个数）</button>
+                <button class="btn btn-hard" onclick="startGame('hard')">困难（三位数）</button>
             </div>
         </div>
         
@@ -347,78 +347,47 @@
         // 题目生成器
         const problemGenerator = {
             easy: function() {
-                // 简单模式：两位数（10-99）
-                return this.generateTwoDigit();
+                // 简单模式：两个数加减法（两位数）
+                return this.generateTwoNumberAdditionSubtraction();
             },
 
             medium: function() {
-                // 中等模式：两位数（10-99）
-                return this.generateTwoDigit();
+                // 中等模式：三个数加减法（两位数）
+                return this.generateThreeNumberAdditionSubtraction(10, 99);
             },
 
             hard: function() {
-                // 困难模式：三位数（100-999）
-                return this.generateThreeDigit();
+                // 困难模式：三个数加减法（三位数）
+                return this.generateThreeNumberAdditionSubtraction(100, 999);
             },
 
-            // 生成两位数题目
-            generateTwoDigit: function() {
-                const operators = ['+', '-', '×', '÷'];
-                const operator = operators[Math.floor(Math.random() * operators.length)];
+            // 生成两个数的加减法（简单模式）
+            generateTwoNumberAdditionSubtraction: function() {
+                // 50% 加法，50% 减法
+                const isAddition = Math.random() < 0.5;
+                const operator = isAddition ? '+' : '-';
 
                 let num1, num2, answer;
 
-                switch(operator) {
-                    case '+':
-                        // 两位数加法
+                if (isAddition) {
+                    // 两位数加法
+                    num1 = this.randomInt(10, 99);
+                    num2 = this.randomInt(10, 99);
+                    // 确保结果不超过999
+                    while (num1 + num2 > 999) {
                         num1 = this.randomInt(10, 99);
                         num2 = this.randomInt(10, 99);
-                        // 确保结果不超过999
-                        while (num1 + num2 > 999) {
-                            num1 = this.randomInt(10, 99);
-                            num2 = this.randomInt(10, 99);
-                        }
-                        answer = num1 + num2;
-                        break;
-                    case '-':
-                        // 两位数减法，确保被减数大于减数
+                    }
+                    answer = num1 + num2;
+                } else {
+                    // 两位数减法，确保被减数大于减数
+                    num1 = this.randomInt(10, 99);
+                    num2 = this.randomInt(10, 99);
+                    while (num1 <= num2) {
                         num1 = this.randomInt(10, 99);
                         num2 = this.randomInt(10, 99);
-                        while (num1 <= num2) {
-                            num1 = this.randomInt(10, 99);
-                            num2 = this.randomInt(10, 99);
-                        }
-                        answer = num1 - num2;
-                        break;
-                    case '×':
-                        // 两位数乘法
-                        num1 = this.randomInt(10, 99);
-                        num2 = this.randomInt(2, 20);
-                        // 确保结果不超过999
-                        while (num1 * num2 > 999) {
-                            num1 = this.randomInt(10, 50);
-                            num2 = this.randomInt(2, 10);
-                        }
-                        answer = num1 * num2;
-                        break;
-                    case '÷':
-                        // 两位数除法
-                        // 先生成除数和商，再计算被除数
-                        num2 = this.randomInt(2, 20);
-                        answer = this.randomInt(2, 50);
-                        // 确保被除数不超过999
-                        while (num2 * answer > 999) {
-                            num2 = this.randomInt(2, 10);
-                            answer = this.randomInt(2, 99);
-                        }
-                        num1 = num2 * answer;
-                        // 确保被除数是两位数或以上
-                        while (num1 < 10) {
-                            num2 = this.randomInt(10, 20);
-                            answer = this.randomInt(2, 10);
-                            num1 = num2 * answer;
-                        }
-                        break;
+                    }
+                    answer = num1 - num2;
                 }
 
                 return {
@@ -430,71 +399,70 @@
                 };
             },
 
-            // 生成三位数题目
-            generateThreeDigit: function() {
-                const operators = ['+', '-', '×', '÷'];
-                const operator = operators[Math.floor(Math.random() * operators.length)];
+            // 生成三个数的加减法（中级和高级模式）
+            generateThreeNumberAdditionSubtraction: function(minNum, maxNum) {
+                // 生成 2-3 个运算符
+                const operatorCount = this.randomInt(2, 3);
 
-                let num1, num2, answer;
+                let numbers = [];
+                let operators = [];
 
-                switch(operator) {
-                    case '+':
-                        // 三位数加法
-                        num1 = this.randomInt(100, 999);
-                        num2 = this.randomInt(100, 999);
-                        // 确保结果不超过999
-                        while (num1 + num2 > 999) {
-                            num1 = this.randomInt(100, 800);
-                            num2 = this.randomInt(100, 199);
+                // 生成第一个数
+                numbers.push(this.randomInt(minNum, maxNum));
+
+                // 生成后续的数和运算符
+                for (let i = 0; i < operatorCount; i++) {
+                    // 随机选择加法或减法
+                    const isAddition = Math.random() < 0.6;  // 60% 加法，40% 减法
+                    operators.push(isAddition ? '+' : '-');
+
+                    // 生成下一个数
+                    let nextNum = this.randomInt(minNum, maxNum);
+
+                    // 如果是减法，需要确保中间结果不会为负数
+                    if (!isAddition) {
+                        let currentSum = numbers[0];
+                        for (let j = 0; j < i; j++) {
+                            if (operators[j] === '+') {
+                                currentSum += numbers[j + 1];
+                            } else {
+                                currentSum -= numbers[j + 1];
+                            }
                         }
-                        answer = num1 + num2;
-                        break;
-                    case '-':
-                        // 三位数减法，确保被减数大于减数
-                        num1 = this.randomInt(100, 999);
-                        num2 = this.randomInt(100, 999);
-                        while (num1 <= num2) {
-                            num1 = this.randomInt(300, 999);
-                            num2 = this.randomInt(100, 299);
+                        // 确保减法后结果仍然非负
+                        while (currentSum - nextNum < 0) {
+                            nextNum = this.randomInt(minNum, Math.min(currentSum, maxNum));
                         }
-                        answer = num1 - num2;
-                        break;
-                    case '×':
-                        // 三位数乘法（简化）
-                        num1 = this.randomInt(100, 999);
-                        num2 = this.randomInt(2, 10);
-                        // 确保结果不超过999
-                        while (num1 * num2 > 999) {
-                            num1 = this.randomInt(100, 200);
-                            num2 = this.randomInt(2, 4);
-                        }
-                        answer = num1 * num2;
-                        break;
-                    case '÷':
-                        // 三位数除法
-                        num2 = this.randomInt(2, 20);
-                        answer = this.randomInt(10, 100);
-                        // 确保被除数不超过999
-                        while (num2 * answer > 999) {
-                            num2 = this.randomInt(2, 10);
-                            answer = this.randomInt(10, 99);
-                        }
-                        num1 = num2 * answer;
-                        // 确保被除数是三位数
-                        while (num1 < 100) {
-                            num2 = this.randomInt(10, 20);
-                            answer = this.randomInt(10, 50);
-                            num1 = num2 * answer;
-                        }
-                        break;
+                    }
+
+                    numbers.push(nextNum);
                 }
 
+                // 计算答案
+                let answer = numbers[0];
+                for (let i = 0; i < operators.length; i++) {
+                    if (operators[i] === '+') {
+                        answer += numbers[i + 1];
+                    } else {
+                        answer -= numbers[i + 1];
+                    }
+                }
+
+                // 构建题目字符串
+                let questionStr = numbers[0].toString();
+                for (let i = 0; i < operators.length; i++) {
+                    questionStr += ` ${operators[i]} ${numbers[i + 1]}`;
+                }
+
+                // 确定主要运算符（用于方法选择）
+                const mainOperator = operators[operators.length - 1];
+
                 return {
-                    question: `${num1} ${operator} ${num2}`,
+                    question: questionStr,
                     answer: answer,
-                    method: this.getRandomMethod(operator),
-                    operator: operator,
-                    explanation: this.getExplanation(`${num1} ${operator} ${num2}`, answer, this.getRandomMethod(operator))
+                    method: this.getRandomMethod(mainOperator),
+                    operator: mainOperator,
+                    explanation: this.getExplanation(questionStr, answer, this.getRandomMethod(mainOperator))
                 };
             },
 
@@ -507,21 +475,17 @@
             getRandomMethod: function(operator) {
                 const allMethods = {
                     '+': ['凑十法', '凑整法', '加法交换律', '加法结合律'],
-                    '-': ['破十法', '凑整法', '加法交换律', '加法结合律'],
-                    '×': ['凑整法', '乘法分配律', '乘法结合律', '乘法交换律'],
-                    '÷': ['凑整法', '乘法分配律', '除法分配律', '乘法结合律']
+                    '-': ['破十法', '凑整法', '加法交换律', '加法结合律']
                 };
-                const methods = allMethods[operator] || ['直接计算'];
+                const methods = allMethods[operator] || ['凑整法'];
                 return methods[Math.floor(Math.random() * methods.length)];
             },
-            
-            // 根据运算符获取可选方法
+
+            // 根据运算符获取可选方法（只保留加减法）
             getAvailableMethods: function(operator) {
                 const allMethods = {
                     '+': ['凑十法', '凑整法', '加法交换律', '加法结合律', '直接计算'],
-                    '-': ['破十法', '凑整法', '加法交换律', '加法结合律', '直接计算'],
-                    '×': ['凑整法', '乘法分配律', '乘法结合律', '乘法交换律', '直接计算'],
-                    '÷': ['凑整法', '乘法分配律', '除法分配律', '乘法结合律', '直接计算']
+                    '-': ['破十法', '凑整法', '加法交换律', '加法结合律', '直接计算']
                 };
                 return allMethods[operator] || ['直接计算'];
             },
