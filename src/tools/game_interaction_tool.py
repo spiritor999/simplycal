@@ -33,8 +33,8 @@ def start_game_session(difficulty: str = "easy") -> str:
             "error": "游戏文件不存在"
         }, ensure_ascii=False)
 
-    # TOS 签名链接（公网可访问）
-    game_link = "https://coze-coding-project.tos.coze.site/coze_storage_7599855582224318498/math_game_c798090a.html?sign=1774616685-b61ea648f8-0-247c4c5dfda8d6b6815b530289476197ef5b748d62685bbd6daed3abd3d30474"
+    # TOS 签名链接（公网可访问，最新版本：只包含加减法）
+    game_link = "https://coze-coding-project.tos.coze.site/coze_storage_7599855582224318498/math_game_d833979a.html?sign=1803562387-0d4f518e07-0-e96f167044bcb36c23395209f2a12db48276668d95c9f4a8e1cbce8e8296852c"
        python -m http.server 8080
     """
 
