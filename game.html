@@ -490,12 +490,30 @@
                 return allMethods[operator] || ['直接计算'];
             },
             
-            getExplanation: function(question, answer, method) {
-                const nums = question.split(/[\+\-\×\÷]/);
-                const operator = question.match(/[\+\-\×\÷]/)[0];
-                const num1 = parseInt(nums[0]);
-                const num2 = parseInt(nums[1]);
-                
+                        getExplanation: function(question, answer, method) {
+                // 解析题目：提取所有数字和运算符
+                const nums = question.split(/[\+\-\×\÷]/).map(s => s.trim());
+                const operators = question.match(/[\+\-\×\÷]/g) || [];
+                const numbers = nums.map(n => parseInt(n));
+
+                // 判断题目类型（两个数或三个数）
+                const isThreeNumber = numbers.length >= 3;
+
+                if (isThreeNumber) {
+                    // 三个数以上的题目
+                    return this.getThreeNumberExplanation(question, answer, method, numbers, operators);
+                } else {
+                    // 两个数的题目
+                    return this.getTwoNumberExplanation(question, answer, method, numbers, operators);
+                }
+            },
+
+            // 两个数题目的讲解
+            getTwoNumberExplanation: function(question, answer, method, numbers, operators) {
+                const num1 = numbers[0];
+                const num2 = numbers[1];
+                const operator = operators[0];
+
                 switch(method) {
                     case '凑十法':
                         const comp = 10 - num1;
@@ -506,7 +524,7 @@
                         = (${num1} + ${comp}) + ${num2 - comp}<br>
                         = 10 + ${num2 - comp}<br>
                         = <strong>${answer}</strong>`;
-                    
+
                     case '破十法':
                         const sub = num1 - 10;
                         return `<h3>⚡ 闪电老师讲解：</h3>
@@ -515,25 +533,94 @@
                         ${num1} - ${num2} = (10 - ${num2}) + ${sub}<br>
                         = ${10 - num2} + ${sub}<br>
                         = <strong>${answer}</strong>`;
-                    
+
                     case '加法交换律':
                         return `<h3>⚡ 闪电老师讲解：</h3>
                         <strong>使用加法交换律：</strong><br>
                         交换加数的位置，和不变<br>
                         ${num1} + ${num2} = ${num2} + ${num1}<br>
                         = <strong>${answer}</strong>`;
-                    
-                    case '乘法分配律':
-                        if (num2 % 10 === 0) {
-                            const other = num2 / 10;
-                            return `<h3>⚡ 闪电老师讲解：</h3>
-                            <strong>使用乘法分配律：</strong><br>
-                            把${num2}拆分成 ${other} × 10<br>
-                            ${num1} × ${num2} = ${num1} × (${other} × 10)<br>
-                            = (${num1} × ${other}) × 10<br>
-                            = ${num1 * other} × 10<br>
-                            = <strong>${answer}</strong>`;
-                        }
+
+                    case '加法结合律':
+                        const compAdd = Math.ceil(num1 / 10) * 10 - num1;
+                        return `<h3>⚡ 闪电老师讲解：</h3>
+                        <strong>使用加法结合律：</strong><br>
+                        凑整十数更容易计算<br>
+                        ${num1} + ${num2}<br>
+                        = (${num1} + ${compAdd}) + (${num2} - ${compAdd})<br>
+                        = ${num1 + compAdd} + ${num2 - compAdd}<br>
+                        = <strong>${answer}</strong>`;
+
+                    case '凑整法':
+                        return `<h3>⚡ 闪电老师讲解：</h3>
+                        <strong>使用凑整法：</strong><br>
+                        把数凑成整十数更容易计算<br>
+                        ${question}<br>
+                        = <strong>${answer}</strong>`;
+
+                    default:
+                        return `<h3>⚡ 闪电老师讲解：</h3>
+                        <strong>直接计算：</strong><br>
+                        ${question}<br>
+                        = <strong>${answer}</strong>`;
+                }
+            },
+
+            // 三个数题目的讲解
+            getThreeNumberExplanation: function(question, answer, method, numbers, operators) {
+                // 生成逐步计算的讲解
+                let steps = [question];
+
+                let currentResult = numbers[0];
+                let currentExpression = `${numbers[0]}`;
+
+                for (let i = 0; i < operators.length; i++) {
+                    const operator = operators[i];
+                    const nextNum = numbers[i + 1];
+
+                    if (operator === '+') {
+                        currentResult += nextNum;
+                    } else {
+                        currentResult -= nextNum;
+                    }
+
+                    currentExpression += ` ${operator} ${nextNum}`;
+                    steps.push(currentExpression);
+                }
+
+                // 根据方法生成讲解
+                switch(method) {
+                    case '凑整法':
+                        return `<h3>⚡ 闪电老师讲解：</h3>
+                        <strong>使用凑整法：</strong><br>
+                        把能凑成整十数的数先结合起来计算<br>
+                        逐步计算：<br>
+                        ${steps.join('<br>')}
+                        = <strong>${answer}</strong>`;
+
+                    case '加法交换律':
+                        return `<h3>⚡ 闪电老师讲解：</h3>
+                        <strong>使用加法交换律：</strong><br>
+                        交换加数的位置，方便凑整<br>
+                        逐步计算：<br>
+                        ${steps.join('<br>')}
+                        = <strong>${answer}</strong>`;
+
+                    case '加法结合律':
+                        return `<h3>⚡ 闪电老师讲解：</h3>
+                        <strong>使用加法结合律：</strong><br>
+                        把容易计算的数先结合起来<br>
+                        逐步计算：<br>
+                        ${steps.join('<br>')}
+                        = <strong>${answer}</strong>`;
+
+                    default:
+                        return `<h3>⚡ 闪电老师讲解：</h3>
+                        <strong>逐步计算：</strong><br>
+                        ${steps.join('<br>')}
+                        = <strong>${answer}</strong>`;
+                }
+            }
                         return `<h3>⚡ 闪电老师讲解：</h3>
                         <strong>使用乘法分配律：</strong><br>
                         ${num1} × ${num2}<br>
