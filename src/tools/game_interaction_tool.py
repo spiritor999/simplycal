@@ -36,18 +36,11 @@ def start_game_session(difficulty: str = "easy") -> str:
     # 构建游戏链接（本地文件路径）
     game_link = f"file://{game_file}"
 
-    # HTTP链接（使用更简单的路径）
-    # 优先使用根目录的副本
-    http_link = "http://localhost:8080/game.html"
+    # HTTP链接（使用对象存储，公网可访问）
+    http_link = os.getenv("GAME_URL", "https://coze-coding-project.tos.coze.site/coze_storage_7599855582224318498/math_game_9ddb30bc.html?sign=1772627640-0a406dd4d3-0-1a5aea819175a046463ded8d405fc176b4996ccc11e17f3f85eb366ba6887363")
 
-    # 备用链接
-    http_link_backup = "http://localhost:8080/assets/math_game.html"
-
-    # 添加服务器检查提示
-    server_info = """
-    💡 如果打不开链接，请先启动游戏服务器：
-       bash scripts/start_game_server.sh
-       或
+    # 备用链接（本地开发使用）
+    http_link_backup = "http://localhost:8080/game.html"
        python -m http.server 8080
     """
 
