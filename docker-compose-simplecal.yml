@@ -1,0 +1,65 @@
+version: '3.8'
+
+# 简便运算智能体 - 独立部署配置
+# 不与现有生产项目冲突，使用独立的网络和端口
+
+services:
+  # 智能体服务
+  agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: simplecal_agent
+    restart: unless-stopped
+    ports:
+      - "8000:8000"  # 智能体 API 端口
+    environment:
+      # 基础配置
+      - TZ=Asia/Shanghai
+      - PORT=8000
+
+      # 工作目录
+      - COZE_WORKSPACE_PATH=/app
+
+      # Coze 平台配置（需要配置）
+      - COZE_INTEGRATION_MODEL_BASE_URL=${COZE_INTEGRATION_MODEL_BASE_URL}
+      - COZE_WORKLOAD_IDENTITY_API_KEY=${COZE_WORKLOAD_IDENTITY_API_KEY}
+
+      # 日志级别
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./config:/app/config:ro
+      - ./assets:/app/assets:ro
+      - agent_logs:/app/logs
+    networks:
+      - simplecal-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # 游戏服务器（可选，用于本地测试）
+  # 注意：游戏页面已上传到 TOS，可以公网访问，不需要这个服务
+  # 如果需要本地测试，可以取消注释
+  # game-server:
+  #   image: python:3.12-slim
+  #   container_name: simplecal_game_server
+  #   working_dir: /app
+  #   command: python -m http.server 8080
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8080:8080"
+  #   volumes:
+  #     - ./assets:/app/assets:ro
+  #   networks:
+  #     - simplecal-network
+
+networks:
+  simplecal-network:
+    driver: bridge
+
+volumes:
+  agent_logs:
+    driver: local
