@@ -37,7 +37,7 @@ def start_game_session(difficulty: str = "easy") -> str:
     game_link = f"file://{game_file}"
 
     # HTTP链接（使用对象存储，公网可访问）
-    http_link = os.getenv("GAME_URL", "https://integration.coze.cn/coze-coding-s3proxy/v1/bucket_1769480145764/math_game_d167fcb7.html")
+    http_link = os.getenv("GAME_URL", "https://integration.coze.cn/coze-coding-s3proxy/v1/bucket_1769480145764/math_game_7d318418.html")
 
     # 备用链接（本地开发使用）
     http_link_backup = "http://localhost:8080/game.html"
