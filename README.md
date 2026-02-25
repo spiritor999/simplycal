@@ -45,7 +45,31 @@ bash scripts/start_all.sh
 - API 文档: http://localhost:8000/docs
 - 游戏页面: http://localhost:8080/math_game.html
 
-### 外网访问（可选）
+### 外网访问（无需启动服务器！）⭐ 推荐
+
+#### 智能体聊天界面
+```
+https://coze-coding-project.tos.coze.site/coze_storage_7599855582224318498/math_game_5ff102e7.html?sign=1803563957-f46266eb6a-0-162ba2ba6bfa84ac67765f9e48aaf3d9964cb84df675c24d1ae5cd68c16d0bf8
+```
+
+**使用方法：**
+1. 点击上面的链接打开智能体聊天界面
+2. 配置智能体 API 地址（默认：http://localhost:8000）
+3. 点击"测试连接"按钮
+4. 开始对话！
+
+详细使用说明请查看：[智能体外网访问使用指南](docs/智能体外网访问使用指南.md)
+
+#### 游戏页面
+```
+https://coze-coding-project.tos.coze.site/coze_storage_7599855582224318498/math_game_242b9f28.html?sign=1803562632-73425fdac4-0-3955ad764de60b58d78751c90f0f97137f6ff5b4527408542a02e9eaa45f207d
+```
+
+**特点：**
+- ✅ 可直接通过外网访问
+- ✅ 无需启动服务器
+- ✅ 支持手机浏览器
+- ✅ 与智能体完全打通
 
 #### 使用 ngrok 快速实现外网访问
 
