@@ -33,8 +33,8 @@ def start_game_session(difficulty: str = "easy") -> str:
             "error": "游戏文件不存在"
         }, ensure_ascii=False)
 
-    # TOS 签名链接（公网可访问，最新版本：只包含加减法，修复了讲解问题和按钮问题）
-    game_link = "https://coze-coding-project.tos.coze.site/coze_storage_7599855582224318498/math_game_46eb5643.html?sign=1803562968-6dde8e4221-0-dc2cb87c9923aff07e029957b1b763cdb6076a09f4e98865616a43299538ce9e"
+    # TOS 签名链接（公网可访问，最新版本：与智能体打通）
+    game_link = "https://coze-coding-project.tos.coze.site/coze_storage_7599855582224318498/math_game_b417786f.html?sign=1803563292-a7ff2330be-0-f3e5b9d6facbdd1a26b92a4dc62d0c680b91bc1f6be5042e090ff2098d8f3d5a"
        python -m http.server 8080
     """
 
@@ -183,5 +183,85 @@ def get_game_tips(topic: str = "all") -> str:
             "topic": "advanced",
             "tips": tips["advanced"]
         }
+
+    return json.dumps(result, ensure_ascii=False)
+
+
+@tool
+def game_completed(score: int, correct: int, total: int, difficulty: str) -> str:
+    """
+    用户完成游戏后报告游戏结果，智能体给出评价和建议
+
+    Args:
+        score: 游戏得分
+        correct: 正确题目数
+        total: 总题目数
+        difficulty: 游戏难度（easy/medium/hard）
+
+    Returns:
+        返回评价、反馈和学习建议的JSON字符串
+    """
+    # 计算正确率
+    accuracy = (correct / total * 100) if total > 0 else 0
+
+    # 计算评价
+    if accuracy == 100:
+        evaluation = "完美通关"
+        emoji = "🏆"
+        comment = "太棒了！你简直是简便运算小天才！"
+        encouragement = "继续保持，你一定能成为数学高手！"
+    elif accuracy >= 80:
+        evaluation = "优秀"
+        emoji = "🥇"
+        comment = "做得非常出色！你掌握得很好！"
+        encouragement = "再多练习几次，你肯定能拿到满分！"
+    elif accuracy >= 60:
+        evaluation = "良好"
+        emoji = "🥈"
+        comment = "做得不错！你掌握了基本的简便运算方法。"
+        encouragement = "继续加油，你越来越棒了！"
+    elif accuracy >= 40:
+        evaluation = "及格"
+        emoji = "🥉"
+        comment = "还需要多多练习哦。"
+        encouragement = "别灰心，多练习几次，你一定能掌握的！"
+    else:
+        evaluation = "继续努力"
+        emoji = "💪"
+        comment = "这次没发挥好，没关系！"
+        encouragement = "复习一下简便运算的方法，再试一次吧！"
+
+    # 根据难度给出额外建议
+    difficulty_text = {
+        "easy": "简单（两个数）",
+        "medium": "中等（三个数）",
+        "hard": "困难（三位数）"
+    }.get(difficulty, difficulty)
+
+    # 根据表现给出学习建议
+    tips = []
+    if accuracy < 60:
+        tips.append("💡 建议：复习一下凑十法和破十法，这两个方法对加减法很有帮助！")
+        tips.append("💡 建议：多练习观察数字的特点，看看能不能凑成整十数。")
+    elif accuracy < 80:
+        tips.append("💡 建议：试试用不同的方法解题，找到最适合你的方法。")
+        tips.append("💡 建议：练习三个数加减法时，先算哪两个数更方便？")
+    else:
+        tips.append("💡 建议：你已经掌握得很好了，可以尝试更难的题目！")
+        tips.append("💡 建议：试试用自己的方法讲解给别人听，这样理解会更深刻！")
+
+    result = {
+        "success": True,
+        "evaluation": evaluation,
+        "emoji": emoji,
+        "comment": comment,
+        "encouragement": encouragement,
+        "score": score,
+        "correct": correct,
+        "total": total,
+        "accuracy": accuracy,
+        "difficulty": difficulty_text,
+        "tips": tips
+    }
 
     return json.dumps(result, ensure_ascii=False)

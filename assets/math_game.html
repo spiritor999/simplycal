@@ -268,6 +268,10 @@
                 选择难度开始游戏，每关10道题，看看你能得多少分！<br>
                 答对+10分，答错-5分
             </p>
+            <div style="text-align: center; margin: 15px 0; padding: 10px; background: #e3f2fd; border-radius: 8px; border-left: 4px solid #2196F3;">
+                <span style="font-size: 14px; color: #1976D2;">🤖 这是来自智能体的简便运算游戏</span><br>
+                <span style="font-size: 12px; color: #666;">完成后点击"返回智能体"按钮，我会根据你的表现给出评价！</span>
+            </div>
             <div class="difficulty-btns">
                 <button class="btn btn-easy" onclick="startGame('easy')">简单（两个数）</button>
                 <button class="btn btn-medium" onclick="startGame('medium')">中等（三个数）</button>
@@ -325,7 +329,10 @@
                 <p><strong>用时:</strong> <span id="total-time">00:00</span></p>
                 <p><strong>正确率:</strong> <span id="accuracy">0%</span></p>
             </div>
-            <button class="btn" onclick="restartGame()">再玩一次</button>
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" onclick="restartGame()" style="margin: 10px;">再玩一次</button>
+                <button class="btn" onclick="returnToAgent()" style="margin: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">返回智能体</button>
+            </div>
         </div>
     </div>
 
@@ -813,7 +820,36 @@
             document.getElementById('result-section').classList.remove('active');
             document.getElementById('start-section').classList.add('active');
         }
-        
+
+        function returnToAgent() {
+            // 保存游戏结果到 localStorage，供智能体读取
+            const gameResult = {
+                score: gameState.score,
+                correctCount: gameState.correctCount,
+                incorrectCount: gameState.incorrectCount,
+                skippedCount: gameState.skippedCount,
+                totalQuestions: gameState.totalQuestions,
+                totalTime: document.getElementById('total-time').innerText,
+                accuracy: document.getElementById('accuracy').innerText,
+                difficulty: gameState.difficulty,
+                timestamp: new Date().toISOString()
+            };
+
+            localStorage.setItem('mathGameResult', JSON.stringify(gameResult));
+
+            // 显示提示信息
+            alert('🎮 游戏结果已保存！\n\n请返回智能体，告诉我"游戏已完成"，我会根据你的表现给出评价和建议！');
+
+            // 关闭窗口或返回上一页
+            if (window.opener) {
+                // 如果是从智能体打开的，关闭窗口
+                window.close();
+            } else {
+                // 否则显示说明
+                alert('💡 提示：请手动返回智能体，对我说"游戏已完成"，我会根据你的表现给出评价！');
+            }
+        }
+
         // 回车提交
         document.getElementById('result').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
