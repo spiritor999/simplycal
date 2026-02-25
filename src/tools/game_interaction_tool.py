@@ -36,11 +36,11 @@ def start_game_session(difficulty: str = "easy") -> str:
     # 构建游戏链接（本地文件路径）
     game_link = f"file://{game_file}"
 
-    # HTTP链接（使用对象存储，公网可访问）
-    http_link = os.getenv("GAME_URL", "https://integration.coze.cn/coze-coding-s3proxy/v1/bucket_1769480145764/math_game_e2068b51.html")
+    # HTTP链接（GitHub Pages，公网可访问）
+    http_link = os.getenv("GAME_URL", "https://spiritor999.github.io/simplycal/game.html")
 
-    # 备用链接（本地开发使用）
-    http_link_backup = "http://localhost:8080/game.html"
+    # 备用链接（对象存储）
+    http_link_backup = "https://integration.coze.cn/coze-coding-s3proxy/v1/bucket_1769480145764/math_game_b5ddebeb.html"
        python -m http.server 8080
     """
 
