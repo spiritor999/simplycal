@@ -292,15 +292,7 @@
                 <label class="answer-label">1️⃣ 选择使用的方法：</label>
                 <select id="method">
                     <option value="">-- 请选择方法 --</option>
-                    <option value="凑十法">凑十法</option>
-                    <option value="破十法">破十法</option>
-                    <option value="加法交换律">加法交换律</option>
-                    <option value="加法结合律">加法结合律</option>
-                    <option value="乘法分配律">乘法分配律</option>
-                    <option value="乘法结合律">乘法结合律</option>
-                    <option value="乘法交换律">乘法交换律</option>
-                    <option value="除法分配律">除法分配律</option>
-                    <option value="直接计算">直接计算</option>
+                    <!-- 方法选项将通过 JavaScript 动态生成 -->
                 </select>
                 
                 <label class="answer-label">2️⃣ 列出计算式子：</label>
@@ -414,8 +406,20 @@
                     question: question,
                     answer: answer,
                     method: method.name,
+                    operator: method.operator,
                     explanation: this.getExplanation(question, answer, method.name)
                 };
+            },
+            
+            // 根据运算符获取可选方法
+            getAvailableMethods: function(operator) {
+                const allMethods = {
+                    '+': ['凑十法', '加法交换律', '加法结合律', '直接计算'],
+                    '-': ['破十法', '加法交换律', '加法结合律', '直接计算'],
+                    '×': ['乘法分配律', '乘法结合律', '乘法交换律', '直接计算'],
+                    '÷': ['乘法分配律', '除法分配律', '乘法结合律', '直接计算']
+                };
+                return allMethods[operator] || ['直接计算'];
             },
             
             getExplanation: function(question, answer, method) {
@@ -534,12 +538,32 @@
             showQuestion();
         }
         
+        // 动态更新方法选项
+        function updateMethodOptions(operator) {
+            const methodSelect = document.getElementById('method');
+            const availableMethods = problemGenerator.getAvailableMethods(operator);
+            
+            // 清空现有选项
+            methodSelect.innerHTML = '<option value="">-- 请选择方法 --</option>';
+            
+            // 添加可用方法选项
+            availableMethods.forEach(method => {
+                const option = document.createElement('option');
+                option.value = method;
+                option.textContent = method;
+                methodSelect.appendChild(option);
+            });
+        }
+        
         // 显示题目
         function showQuestion() {
             const question = gameState.questions[gameState.currentQuestionIndex];
             document.getElementById('question-num').textContent = `第 ${gameState.currentQuestionIndex + 1}/${gameState.totalQuestions} 题`;
             document.getElementById('question').textContent = `${question.question} = ?`;
             document.getElementById('score').textContent = gameState.score;
+            
+            // 根据运算符动态生成方法选项
+            updateMethodOptions(question.operator);
             
             // 清空输入
             document.getElementById('method').value = '';
