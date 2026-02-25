@@ -34,7 +34,13 @@ def start_game_session(difficulty: str = "easy") -> str:
         }, ensure_ascii=False)
 
     # TOS 签名链接（公网可访问，最新版本：只包含加减法，修复了讲解问题）
-    game_link = "https://coze-coding-project.tos.coze.site/coze_storage_7599855582224318498/math_game_242b9f28.html?sign=1803562632-73425fdac4-0-3955ad764de60b58d78751c90f0f97137f6ff5b4527408542a02e9eaa45f207d"
+    game_link = "https://coze-coding-project.tos.coze.site/coze_storage_7599855582224318498/math_game_e8eebf0a.html?sign=1803562768-22d4b493c6-0-31b108e3f5f8a9eee23574a0887672272b75632b0c4f69dbdf9bf0ba5ef5c6aa"
+
+    # 备用链接1（可以访问，但包含乘除法）
+    game_link_backup1 = "https://coze-coding-project.tos.coze.site/coze_storage_7599855582224318498/math_game_d833979a.html?sign=1803562387-0d4f518e07-0-e96f167044bcb36c23395209f2a12db48276668d95c9f4a8e1cbce8e8296852c"
+
+    # 备用链接2（本地文件）
+    game_link_local = "game.html"
        python -m http.server 8080
     """
 
