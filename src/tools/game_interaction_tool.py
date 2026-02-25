@@ -36,11 +36,11 @@ def start_game_session(difficulty: str = "easy") -> str:
     # 构建游戏链接（本地文件路径）
     game_link = f"file://{game_file}"
 
-    # HTTP链接（GitHub Pages，公网可访问）
-    http_link = os.getenv("GAME_URL", "https://spiritor999.github.io/simplycal/game.html")
+    # HTTP链接（优先使用本地服务器）
+    http_link = "http://localhost:8080/game.html"
 
-    # 备用链接（对象存储）
-    http_link_backup = "https://integration.coze.cn/coze-coding-s3proxy/v1/bucket_1769480145764/math_game_b5ddebeb.html"
+    # TOS签名链接（公网可访问，旧版本，包含乘除法）
+    http_link_tos = "https://coze-coding-project.tos.coze.site/coze_storage_7599855582224318498/math_game_c798090a.html?sign=1774616685-b61ea648f8-0-247c4c5dfda8d6b6815b530289476197ef5b748d62685bbd6daed3abd3d30474"
        python -m http.server 8080
     """
 
@@ -49,10 +49,10 @@ def start_game_session(difficulty: str = "easy") -> str:
         "session_id": session_id,
         "game_link": game_link,
         "http_link": http_link,
-        "http_link_backup": http_link_backup,
+        "http_link_tos": http_link_tos,
         "difficulty": difficulty,
         "server_info": server_info,
-        "message": "游戏已开始！请打开链接玩游戏，完成后告诉我你的得分！"
+        "message": "游戏已开始！推荐使用本地服务器访问游戏（http://localhost:8080/game.html），也可以直接打开本地文件（game.html）。如需公网访问，可以使用 TOS 签名链接（但可能是旧版本）。"
     }
 
     return json.dumps(result, ensure_ascii=False)
