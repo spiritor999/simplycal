@@ -34,7 +34,7 @@ def start_game_session(difficulty: str = "easy") -> str:
         }, ensure_ascii=False)
 
     # TOS 签名链接（公网可访问，最新版本：与智能体打通）
-    game_link = "https://coze-coding-project.tos.coze.site/coze_storage_7599855582224318498/math_game_242b9f28.html?sign=1803562632-73425fdac4-0-3955ad764de60b58d78751c90f0f97137f6ff5b4527408542a02e9eaa45f207d"
+    game_link = "https://coze-coding-project.tos.coze.site/coze_storage_7599855582224318498/math_game_7156ba9f.html?sign=1803564241-1ddf7eb892-0-7be3bd943486cfd156ff9215b21f1c6fcc28dcf49efb0af4e1e9e47c15aaf7b2"
        python -m http.server 8080
     """
 

@@ -49,7 +49,7 @@ bash scripts/start_all.sh
 
 #### 智能体聊天界面
 ```
-https://coze-coding-project.tos.coze.site/coze_storage_7599855582224318498/math_game_5ff102e7.html?sign=1803563957-f46266eb6a-0-162ba2ba6bfa84ac67765f9e48aaf3d9964cb84df675c24d1ae5cd68c16d0bf8
+https://coze-coding-project.tos.coze.site/coze_storage_7599855582224318498/agent_2378e586.html?sign=1803564235-a4c95d673a-0-a0524436f21ef1737c496afb5d4de8d501e2b88eb89564fc86c1fc7dfbf3a6fa
 ```
 
 **使用方法：**
@@ -62,7 +62,7 @@ https://coze-coding-project.tos.coze.site/coze_storage_7599855582224318498/math_
 
 #### 游戏页面
 ```
-https://coze-coding-project.tos.coze.site/coze_storage_7599855582224318498/math_game_242b9f28.html?sign=1803562632-73425fdac4-0-3955ad764de60b58d78751c90f0f97137f6ff5b4527408542a02e9eaa45f207d
+https://coze-coding-project.tos.coze.site/coze_storage_7599855582224318498/math_game_7156ba9f.html?sign=1803564241-1ddf7eb892-0-7be3bd943486cfd156ff9215b21f1c6fcc28dcf49efb0af4e1e9e47c15aaf7b2
 ```
 
 **特点：**
